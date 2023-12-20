@@ -3,7 +3,6 @@ import asyncio
 from openfga_sdk import OpenFgaClient, ClientConfiguration, TupleKey
 from openfga_sdk.client import ClientCheckRequest
 from openfga_sdk.client.models import ClientListObjectsRequest
-
 from prettytable import PrettyTable
 
 
@@ -41,14 +40,22 @@ class OpenFga:
 async def main():
     openfga = OpenFga()
 
-    print("\n", "---" * 15)
-    print("Check for access:")
     payload = ClientCheckRequest(
         user="user:1",
         relation="owner",
         object="doc:1"
     )
+    print("\n", "---" * 15)
+    print("Check for access:")
+    await openfga.check(payload)
 
+    payload = ClientCheckRequest(
+        user="user:m1",
+        relation="can_view",
+        object="doc:t1"
+    )
+    print("\n", "---" * 15)
+    print("Check for access for a member where team:t1 is viewer for doc:t1:")
     await openfga.check(payload)
 
     payload = TupleKey(
