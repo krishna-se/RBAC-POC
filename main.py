@@ -64,7 +64,7 @@ async def main():
         relation="owner",
     )
     print("\n", "---" * 15)
-    print(f"docs of {payload.user} are: ")
+    print(f"docs where {payload.user} is {payload.relation} are: ")
     await openfga.list_read(payload)
 
     payload = TupleKey(
