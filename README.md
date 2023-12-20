@@ -1,46 +1,41 @@
-Project Name README
-Introduction
-Welcome to the [Project Name]! This README provides a quick guide on how to set up and run the project. Please follow the instructions below to get started.
+# [RBAC-POC]
 
-Prerequisites
-Docker installed on your machine
-Python installed on your machine
-Pip installed on your machine
-Getting Started
-Clone the Repository:
+## Introduction
 
-bash
-Copy code
-git clone [repository-url]
-cd [project-folder]
-Build and Run Docker Containers:
+Welcome to the [Project Name]! This project aims to [briefly describe the project's purpose]. This README provides a quick guide on how to set up and run the project.
 
-Navigate to the project root directory and run the following commands:
+## Prerequisites
 
-bash
-Copy code
+To run this project, you'll need the following software installed on your machine:
+```
+Docker
+Python
+Pip
+```
+## Getting Started
+
+1. Clone the Repository:
+
+```Bash
+clone repo
+cd RBAC-POC
+```
+Use code with caution. Learn more
+2. Build and Run Docker Containers:
+
+```Bash
 docker-compose build
 docker-compose up
-This will set up the necessary Docker containers for the project.
+```
+Use code with caution. Learn more
+3. Install Python Dependencies:
 
-Install Python Dependencies:
-
-Open another console, navigate to the project root directory, and install the Python dependencies:
-
-bash
-Copy code
+```Bash
 pip install -r requirements.txt
-Run the Project:
+```
+Use code with caution. Learn more
+4. Run the Project:
 
-Start the main application by running:
-
-bash
-Copy code
+```Bash
 python main.py
-This will launch the project, and you should see the application running.
-
-Contributing
-If you would like to contribute to the project, please follow the contribution guidelines.
-
-Issues
-If you encounter any issues or have suggestions, please report them in the issue tracker.
+```
