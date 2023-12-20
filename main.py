@@ -95,11 +95,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-"""
-1. Listing api for a user and for doc
-2. If user owner/admin of team he can not be member in another/same team
-3. Create team as resource and give him some permission and some permission to team member
-4. If user has access to which all docs -  vice versa
-5. Team wala access
-"""
