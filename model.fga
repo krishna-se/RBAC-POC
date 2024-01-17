@@ -1,0 +1,51 @@
+model
+  schema 1.1
+
+type company
+  relations
+    define can_create_team: super_admin
+    define can_modify_billing: super_admin
+    define super_admin: [user]
+
+type team
+  relations
+    define admin: [user, team#member]
+    define can_add_admin: super_admin from org
+    define can_add_member: admin or super_admin from org
+    define can_modify_admin: super_admin from org
+    define can_modify_member: admin or super_admin from org
+    define can_remove_admin: super_admin from org
+    define can_remove_member: admin or super_admin from org
+    define member: [user, team#member] or admin
+    define org: [company]
+
+type folder
+  relations
+    define accessor: [team#admin]
+    define can_delete: super_admin from org
+    define org: [company]
+    define view: accessor
+
+type file
+  relations
+    define can_create: owner
+    define can_delete: owner
+    define can_edit: owner
+    define can_read: viewer or owner
+    define owner: [user]
+    define viewer: [user, team#member]
+
+
+type module
+  relations
+    define can_view_usage_reports: [user, team#member]
+    define can_view_originals_listing: [user, team#member]
+
+type template
+  relations
+    define can_delete: viewer or owner
+    define can_edit: viewer or owner
+    define can_read: (viewer or owner) but not can_delete
+    define owner: [user]
+    define viewer: [user, team#member]
+type user

@@ -11,7 +11,7 @@ class OpenFga:
         self.configuration = ClientConfiguration(
             api_scheme=api_scheme,
             api_host=api_host,
-            store_id="01HH3ZY8HPJXF5Y466WJ5BZ2QJ"
+            store_id="01HKPX2406CPR7Q18RV58R4J9N"
         )
         self.fga_client = OpenFgaClient(self.configuration)
 
@@ -21,11 +21,17 @@ class OpenFga:
 
     async def list_objects(self, payload: ClientListObjectsRequest):
         resp = await self.fga_client.list_objects(payload)
-        print(f"{payload.user} is {payload.relation} of {payload.type}s: ", resp.objects)
+        x = PrettyTable()
+        x.field_names = [payload.user]
+        x.add_row(resp.objects)
+        print(x)
 
     async def list_read(self, payload: TupleKey):
-        resp = await self.fga_client.read(payload)
-        await self.print_data(resp.tuples)
+        try:
+            resp = await self.fga_client.read(payload)
+            await self.print_data(resp.tuples)
+        except Exception as e:
+            print(e.__dict__)
 
     @staticmethod
     async def print_data(data):
@@ -40,59 +46,66 @@ class OpenFga:
 async def main():
     openfga = OpenFga()
 
-    payload = ClientCheckRequest(
-        user="user:1",
-        relation="owner",
-        object="doc:1"
-    )
     print("\n", "---" * 15)
+    payload = ClientCheckRequest(
+        user="user:u3",
+        relation="owner",
+        object="file:f1"
+    )
     print("Check for access:")
     await openfga.check(payload)
 
-    payload = ClientCheckRequest(
-        user="user:m1",
-        relation="can_view",
-        object="doc:t1"
-    )
     print("\n", "---" * 15)
+    payload = ClientCheckRequest(
+        user="user:m5",
+        relation="viewer",
+        object="file:f1"
+    )
     print("Check for access for a member where team:t1 is viewer for doc:t1:")
     await openfga.check(payload)
 
-    payload = TupleKey(
-        user="user:3",
-        object="doc:",
-        relation="owner",
-    )
     print("\n", "---" * 15)
-    print(f"docs where {payload.user} is {payload.relation} are: ")
+    print("1. List all file-objects a member/admin has access to.")
+    payload = TupleKey(
+        user="user:m2",
+        object="file:",
+    )
     await openfga.list_read(payload)
 
-    payload = TupleKey(
-        relation="member",
-        object="team:1"
-    )
     print("\n", "---" * 15)
-    print(f"{payload.relation}s of {payload.object} are: ")
+    print("2. List all member/admin who has <define-perm> to a file-object.")
+    payload = TupleKey(
+        object="file:f1"
+    )
     await openfga.list_read(payload)
 
-    payload = TupleKey(
-        user="user:3",
-        object="doc:"
-    )
     print("\n", "---" * 15)
-    print(f"{payload.object}s of {payload.user} are: ")
+    print("3. List all teams for a admin/member. ")
+    payload = TupleKey(
+        user="user:m2",
+        object="team:"
+    )
     await openfga.list_read(payload)
 
-    payload = TupleKey(
-        object="doc:t1"
-    )
     print("\n", "---" * 15)
-    print(f"{payload.object} is shared with: ")
+    print("4. List all members/admin of a team.")
+    payload = TupleKey(
+        object="team:t2",
+        relation="member"
+    )
     await openfga.list_read(payload)
+
+    print("\n", "---" * 15)
+    print("5. List all teams in an Organization/Company.")
+    payload = ClientListObjectsRequest(
+        user="company:xyz",
+        relation="org",
+        type="team"
+    )
+    await openfga.list_objects(payload)
 
     await openfga.fga_client.close()
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-
