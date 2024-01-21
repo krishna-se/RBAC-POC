@@ -19,8 +19,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+#    command: >
+#      sh -c "echo 'Waiting for PostgreSQL to become available...';
+#             until pg_isready -U postgres; do sleep 1; done;
+#             pg_dump --file=/backups/backup.sql --host=postgres --port=5432 --username=postgres -w --no-password"
     volumes:
+
       - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups  # New volume for backups
+
   migrate:
     depends_on:
       postgres:
@@ -57,5 +64,6 @@ services:
       - "8081:8081"
       # Needed for the playground (Do not enable in prod!)
       - "3000:3000"
+
 volumes:
   postgres_data:
