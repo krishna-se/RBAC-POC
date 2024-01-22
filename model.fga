@@ -3,129 +3,103 @@ model
 
 type organization
   relations
-    define org_view: super_admin or billing_admin
-    define org_create: super_admin or billing_admin
-    define org_edit: super_admin or billing_admin
-    define org_billing_view: super_admin or billing_admin
+    define super_admin: [user]
+    define billing_admin: [user]
+    
     define org_billing_create: super_admin or billing_admin
     define org_billing_edit: super_admin or billing_admin
-    define org_team_view: super_admin or billing_admin
+    define org_billing_view: super_admin or billing_admin
     define org_biz_team_create: super_admin
-    define org_biz_team_edit: super_admin
     define org_biz_team_delete: super_admin
+    define org_biz_team_edit: super_admin
+    define org_create: super_admin or billing_admin
+    define org_edit: super_admin or billing_admin
+    define org_team_view: super_admin or billing_admin
+    define org_view: super_admin or billing_admin
 
-type super_admin
+type team
   relations
     define org: [organization]
-    define can_create_team: super_admin
-    define can_modify_billing: super_admin
-
-type billing_admin
-  relations
-    define org: [organization]
-
-type teams
-  relations
     define admin: [user, team#member]
-    define org: [organization]
+    define member: [user, team#member] or admin
 
-    define team_view: admin or super_admin
-    define team_edit: admin or super_admin
-    define team_admin_edit: super_admin
-    define team_member_edit: super_admin
-    define team_dev_config_view: admin or super_admin
-    define team_dev_config_create: admin or super_admin
-    define team_dev_config_edit: admin or super_admin
+    define team_view: admin or super_admin from org
+    define team_edit: admin or super_admin from org
+    define team_admin_edit: super_admin from org
+    define team_member_edit: super_admin from org
+    define team_dev_config_view: admin or super_admin from org
+    define team_dev_config_create: admin or super_admin from org
+    define team_dev_config_edit: admin or super_admin from org
 
 type business_team
   relations
     define org: [organization]
-    define admin: [team_admin, team#member]
-    define can_add_admin: billing_admin
-    define can_add_member: admin or billing_admin
-    define can_modify_admin: billing_admin
-    define can_modify_member: admin or billing_admin
-    define can_remove_admin: billing_admin
-    define can_remove_member: admin or billing_admin
-    define member: [user, team#member] or admin
+    define admin: [user, business_team#member]
+    define member: [user, business_team#member] or admin
 
-type team_admin
-  relations
-    define org: [organization]
-    define admin: [user, team#member]
+    define can_add_admin: billing_admin from org
+    define can_modify_admin: billing_admin from org
+    define can_remove_admin: billing_admin from org
 
-type team_member
-  relations
-    define org: [organization]
-    define member: [user, team#member] or team_admin
+    define can_add_member: admin or billing_admin from org
+    define can_modify_member: admin or billing_admin from org
+    define can_remove_member: admin or billing_admin from org
 
 type dev_team
   relations
     define org: [organization]
-    define admin: [dev_admin, team#member]
-    define can_add_admin: billing_admin
-    define can_add_member: admin or billing_admin
-    define can_modify_admin: billing_admin
-    define can_modify_member: admin or billing_admin
-    define can_remove_admin: billing_admin
-    define can_remove_member: admin or billing_admin
-    define member: [user, team#member] or admin
-
-type dev_admin
-  relations
-    define org: [organization]
     define admin: [user, dev_team#member]
+    define member: [user, dev_team#member] or admin
 
-type dev_member
-  relations
-    define org: [organization]
-    define member: [user, dev_team#member] or dev_admin
+    define can_add_admin: super_admin from org
+    define can_modify_admin: super_admin from org
+    define can_remove_admin: super_admin from org
 
-type resource_groups
-  relations
-    define org: [organization]
+    define can_add_member: admin or super_admin from org
+    define can_modify_member: admin or super_admin from org
+    define can_remove_member: admin or super_admin from org
 
 type files
   relations
+    define org: [organization]
+    define owner: [user]
+    define viewer: [user, team#member]
+
     define can_create: owner
     define can_delete: owner or super_admin from org
     define can_edit: owner or super_admin from org
     define can_read: viewer or owner
-    define owner: [user]
-    define viewer: [user, team#member]
-    define can_delete: super_admin from org
-    define view: [team#admin]
-
+    
 type template
   relations
     define org: [organization]
+    define owner: [user]
+    define viewer: [user, team#member]
 
+    define can_create: owner
+    define can_delete: owner or super_admin from org
+    define can_edit: owner or super_admin from org
+    define can_read: viewer or owner
+    
 type original
   relations
     define org: [organization]
+    define owner: [user]
+    define viewer: [user, team#member]
 
-type draft
-  relations
-    define org: [organization]
+    define can_create: owner
+    define can_delete: owner or super_admin from org
+    define can_edit: owner or super_admin from org
+    define can_read: viewer or owner
 
-type pending_on_me
-  relations
-    define org: [organization]
-
-type pending_on_others
-  relations
-    define org: [organization]
-
+    
 type modules
   relations
-    define can_view_originals_listing: [user, team#member]
-    define can_view_usage_reports: [user, team#member]
     define org: [organization]
+    define view_usage_reports: [user, team#member]
+    define view_pending_on_others: [user, team#member]
+    define view_draft: [user, team#member]
+    define view_original: [user, team#member]
+    define view_template: [user, team#member]
 
-type usage_report
-  relations
-    define org: [organization]
-
-type permissions
-  relations
-    define org: [organization]
+type user
